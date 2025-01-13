@@ -9,6 +9,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 
 @Entity
 @Table(name="TBL_PRODUCT")
@@ -18,16 +23,23 @@ public class Product implements Serializable{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(nullable = false)
+    @Column(nullable = false, length = 255)
+    @NotBlank(message = "Name can not be blank")
+    @Size(min = 3, max = 255, message = "Name must be between 3 and 255 characters")
     private String name;
+
     @Column(nullable = false, length = 1024)
+    @NotBlank(message = "Description can not be blank")
+    @Size(min = 3, max = 1024, message = "Description must be between 3 and 1024 characters")
     private String description;
     
-    @ManyToOne
-    private Category category;
     private boolean promotion;
     private boolean newProduct;
+    @Min(value = 0, message = "Price can not be less than 0")
+    @Max(value = 999999999, message = "Price can not be greater than 999999999")
     private Double price;
+    @ManyToOne
+    private Category category;
     
     public  Product(){}
     
