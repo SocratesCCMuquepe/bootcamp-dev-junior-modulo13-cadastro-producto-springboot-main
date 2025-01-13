@@ -2,14 +2,14 @@ package ao.osti.product_backend.models;
 
 import java.io.Serializable;
 
+import ao.osti.product_backend.dto.CategoryResponse;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+
 
 @Entity
 @Table(name = "TBL_CATEGORY")
@@ -19,11 +19,12 @@ public class Category implements Serializable {
     private Integer id;
     
     @Column(nullable = false, length = 100, unique = true)
-    @NotBlank(message = "Name can not be blank")
-    @Size(min = 3, max = 100, message = "Name must be between 3 and 100 characters")
     private String name;
 
     public Category() {
+    }
+    public Category(String name) {
+        this.name = name;
     }
 
     public Category(Integer id, String name) {
@@ -45,6 +46,10 @@ public class Category implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public CategoryResponse toCategoryResponse() {
+        return new CategoryResponse(id, name);
     }
 
     @Override

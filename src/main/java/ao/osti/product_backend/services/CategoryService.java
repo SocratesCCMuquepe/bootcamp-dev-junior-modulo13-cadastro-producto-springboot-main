@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import ao.osti.product_backend.repositories.CategoryRepository;
+import ao.osti.product_backend.dto.CategoryRequest;
+import ao.osti.product_backend.dto.CategoryResponse;
 import ao.osti.product_backend.models.Category;
 
 @Service
@@ -26,8 +28,9 @@ public class CategoryService {
         return categoryRepository.findAll();
     }
 
-    public Category save(Category category) {
-        return categoryRepository.save(category);
+    public CategoryResponse save(CategoryRequest categoryRequest) {
+        Category category = categoryRepository.save(categoryRequest.toCategory());
+        return category.toCategoryResponse();
     }
 
     public void deleteById(int id) {

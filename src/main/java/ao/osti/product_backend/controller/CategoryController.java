@@ -9,6 +9,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import ao.osti.product_backend.dto.CategoryRequest;
+import ao.osti.product_backend.dto.CategoryResponse;
 import ao.osti.product_backend.models.Category;
 import ao.osti.product_backend.services.CategoryService;
 
@@ -21,8 +23,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
 
-
-
 @RestController
 @CrossOrigin
 @RequestMapping("categories")
@@ -32,16 +32,15 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @PostMapping
-    public ResponseEntity<Category> save(@Validated @RequestBody Category category) {
-        category = categoryService.save(category);
+    public ResponseEntity<CategoryResponse> save(@Validated @RequestBody CategoryRequest categoryRequest) {
+        CategoryResponse category = categoryService.save(categoryRequest);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(category.getId())
                 .toUri();
-        return ResponseEntity.created(location).body(category);        
+        return ResponseEntity.created(location).body(category);
     }
-    
 
     @GetMapping("{id}")
     public ResponseEntity<Category> getCategorie(@PathVariable int id) {
