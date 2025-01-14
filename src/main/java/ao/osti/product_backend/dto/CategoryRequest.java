@@ -28,7 +28,7 @@ public class CategoryRequest {
         return description;
     }
 
-    public Category toCategory() {
+    public Category toEntity() {
         return new Category(name);
     }
 }

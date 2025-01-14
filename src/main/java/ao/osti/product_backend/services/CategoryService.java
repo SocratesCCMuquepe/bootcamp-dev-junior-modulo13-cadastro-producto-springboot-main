@@ -17,6 +17,13 @@ public class CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    public CategoryResponse getDTOById(int id) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Categories not found..!"));
+        return category.toDTO();
+    }
+
     public Category getById(int id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
@@ -24,13 +31,17 @@ public class CategoryService {
         return category;
     }
 
-    public List<Category> getAll() {
-        return categoryRepository.findAll();
+    public List<CategoryResponse> getAll() {
+        // TODO Auto-generated method stub by Copilot
+        // Código da Aula
+        // return categoryRepository.findAll().stream().map(c --> c.toDTO()).collect(Collectors.toList());
+        // Copilot suggests the following code:
+        return categoryRepository.findAll().stream().map(Category::toDTO).toList();
     }
 
     public CategoryResponse save(CategoryRequest categoryRequest) {
-        Category category = categoryRepository.save(categoryRequest.toCategory());
-        return category.toCategoryResponse();
+        Category category = categoryRepository.save(categoryRequest.toEntity());
+        return category.toDTO();
     }
 
     public void deleteById(int id) {
@@ -38,7 +49,7 @@ public class CategoryService {
         categoryRepository.delete(category);
     }
 
-    public void update(int id, Category categoryUpdate) {
+    public void update(int id, CategoryRequest categoryUpdate) {
         Category category = getById(id);
 
         category.setName(categoryUpdate.getName());

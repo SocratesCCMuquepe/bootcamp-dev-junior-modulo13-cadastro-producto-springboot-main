@@ -10,19 +10,19 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-
 @Entity
 @Table(name = "TBL_CATEGORY")
 public class Category implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    
+
     @Column(nullable = false, length = 100, unique = true)
     private String name;
 
     public Category() {
     }
+
     public Category(String name) {
         this.name = name;
     }
@@ -30,6 +30,10 @@ public class Category implements Serializable {
     public Category(Integer id, String name) {
         this.id = id;
         this.name = name;
+    }
+
+    public Category(Integer id) {
+        this.id = id;
     }
 
     public Integer getId() {
@@ -48,7 +52,7 @@ public class Category implements Serializable {
         this.name = name;
     }
 
-    public CategoryResponse toCategoryResponse() {
+    public CategoryResponse toDTO() {
         return new CategoryResponse(id, name);
     }
 

@@ -3,6 +3,8 @@ package ao.osti.product_backend.controller;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import ao.osti.product_backend.dto.ProductRequest;
+import ao.osti.product_backend.dto.ProductResponse;
 import ao.osti.product_backend.models.Product;
 import ao.osti.product_backend.services.ProductService;
 
@@ -30,8 +32,8 @@ public class ProductController {
     private ProductService productService;
 
     @PostMapping
-    public ResponseEntity<Product> save(@Validated @RequestBody Product product) {
-        product = productService.save(product);
+    public ResponseEntity<ProductResponse> save(@Validated @RequestBody ProductRequest productRequest) {
+        ProductResponse product = productService.save(productRequest);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
@@ -41,13 +43,13 @@ public class ProductController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Product> getProduct(@PathVariable long id) {
-        Product product = productService.getById(id);
+    public ResponseEntity<ProductResponse> getProduct(@PathVariable long id) {
+        ProductResponse product = productService.getDTOById(id);
         return ResponseEntity.ok(product);
     }
 
     @GetMapping
-    public ResponseEntity<List<Product>> getProducts() {
+    public ResponseEntity<List<ProductResponse>> getProducts() {
         return ResponseEntity.ok(productService.getAll());
     }
 
@@ -58,7 +60,7 @@ public class ProductController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable long id, @RequestBody Product productUpdate) {
+    public ResponseEntity<Product> updateProduct(@PathVariable long id,@Validated @RequestBody ProductRequest productUpdate) {
         productService.update(id, productUpdate);
         return ResponseEntity.ok().build();
     }

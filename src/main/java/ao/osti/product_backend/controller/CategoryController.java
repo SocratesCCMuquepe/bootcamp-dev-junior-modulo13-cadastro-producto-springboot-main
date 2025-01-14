@@ -11,7 +11,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import ao.osti.product_backend.dto.CategoryRequest;
 import ao.osti.product_backend.dto.CategoryResponse;
-import ao.osti.product_backend.models.Category;
 import ao.osti.product_backend.services.CategoryService;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -43,13 +42,13 @@ public class CategoryController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Category> getCategorie(@PathVariable int id) {
-        Category category = categoryService.getById(id);
+    public ResponseEntity<CategoryResponse> getCategorie(@PathVariable int id) {
+        CategoryResponse category = categoryService.getDTOById(id);
         return ResponseEntity.ok(category);
     }
 
     @GetMapping
-    public ResponseEntity<List<Category>> getCategories() {
+    public ResponseEntity<List<CategoryResponse>> getCategories() {
         return ResponseEntity.ok(categoryService.getAll());
     }
 
@@ -60,7 +59,7 @@ public class CategoryController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Void> updateCategory(@PathVariable int id, @RequestBody Category categoryUpdate) {
+    public ResponseEntity<Void> updateCategory(@PathVariable int id, @RequestBody CategoryRequest categoryUpdate) {
         categoryService.update(id, categoryUpdate);
         return ResponseEntity.noContent().build();
     }

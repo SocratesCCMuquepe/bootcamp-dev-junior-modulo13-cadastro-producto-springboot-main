@@ -2,6 +2,7 @@ package ao.osti.product_backend.models;
 
 import java.io.Serializable;
 
+import ao.osti.product_backend.dto.ProductResponse;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,40 +10,32 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
-
 
 @Entity
-@Table(name="TBL_PRODUCT")
-public class Product implements Serializable{
-    //Atributos
+@Table(name = "TBL_PRODUCT")
+public class Product implements Serializable {
+    // Atributos
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @Column(nullable = false, length = 255)
-    @NotBlank(message = "Name can not be blank")
-    @Size(min = 3, max = 255, message = "Name must be between 3 and 255 characters")
     private String name;
 
     @Column(nullable = false, length = 1024)
-    @NotBlank(message = "Description can not be blank")
-    @Size(min = 3, max = 1024, message = "Description must be between 3 and 1024 characters")
     private String description;
-    
+
     private boolean promotion;
     private boolean newProduct;
-    @Min(value = 0, message = "Price can not be less than 0")
-    @Max(value = 999999999, message = "Price can not be greater than 999999999")
+
     private Double price;
+
     @ManyToOne
     private Category category;
-    
-    public  Product(){}
-    
+
+    public Product() {
+    }
+
     public Product(Long id, String name, String description, Category category, boolean promotion, boolean newProduct,
             Double price) {
         this.id = id;
@@ -63,6 +56,26 @@ public class Product implements Serializable{
         this.newProduct = newProduct;
         this.price = price;
     }
+
+    public ProductResponse toDTO() {
+        return new ProductResponse(id, name, description, promotion, newProduct,
+                price, category.toDTO());
+    }
+
+    /*
+     * public ProductResponse toDTO() {
+     * ProductResponse productResponse = new ProductResponse();
+     * productResponse.setId(this.id);
+     * productResponse.setName(this.name);
+     * productResponse.setDescription(this.description);
+     * productResponse.setPromotion(this.promotion);
+     * productResponse.setNewProduct(this.newProduct);
+     * productResponse.setPrice(this.price);
+     * productResponse.setCategory(this.category.toDTO());
+     * 
+     * return productResponse;
+     * }
+     */
 
     public String getDescription() {
         return description;
@@ -99,18 +112,23 @@ public class Product implements Serializable{
     public Long getId() {
         return id;
     }
+
     public void setId(Long id) {
         this.id = id;
     }
+
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
+
     public Double getPrice() {
         return price;
     }
+
     public void setPrice(Double price) {
         this.price = price;
     }
@@ -146,5 +164,4 @@ public class Product implements Serializable{
                 + ", promotion=" + promotion + ", newProduct=" + newProduct + ", price=" + price + "]";
     }
 
-    
 }

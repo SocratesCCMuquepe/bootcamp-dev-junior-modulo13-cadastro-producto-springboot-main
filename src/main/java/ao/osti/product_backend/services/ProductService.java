@@ -7,6 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import ao.osti.product_backend.dto.CategoryResponse;
+import ao.osti.product_backend.dto.ProductRequest;
+import ao.osti.product_backend.dto.ProductResponse;
 import ao.osti.product_backend.models.Category;
 import ao.osti.product_backend.models.Product;
 import ao.osti.product_backend.repositories.ProductRepository;
@@ -19,18 +22,24 @@ public class ProductService {
     @Autowired
     private CategoryService categoryService;
 
+    public ProductResponse getDTOById(long id) {
+        Product product = getById(id);
+        return product.toDTO();
+    }
+
     public Product getById(long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found..!"));
         return product;
     }
 
-    public List<Product> getAll() {
-        return productRepository.findAll();
+    public List<ProductResponse> getAll() {
+        return productRepository.findAll().stream().map(Product::toDTO).toList();
     }
 
-    public Product save(Product product) {
-        return productRepository.save(product);
+    public ProductResponse save(ProductRequest productRequest) {
+        Product product = productRepository.save(productRequest.toEntity());
+        return product.toDTO();
     }
 
     public void deleteById(long id) {
@@ -38,7 +47,7 @@ public class ProductService {
         productRepository.delete(product);
     }
 
-    public void update(long id, Product productUpdate) {
+    public void update(long id, ProductRequest productUpdate) {
         Product product = getById(id);
 
         if (productUpdate.getCategory() == null) {
