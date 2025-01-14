@@ -62,21 +62,6 @@ public class Product implements Serializable {
                 price, category.toDTO());
     }
 
-    /*
-     * public ProductResponse toDTO() {
-     * ProductResponse productResponse = new ProductResponse();
-     * productResponse.setId(this.id);
-     * productResponse.setName(this.name);
-     * productResponse.setDescription(this.description);
-     * productResponse.setPromotion(this.promotion);
-     * productResponse.setNewProduct(this.newProduct);
-     * productResponse.setPrice(this.price);
-     * productResponse.setCategory(this.category.toDTO());
-     * 
-     * return productResponse;
-     * }
-     */
-
     public String getDescription() {
         return description;
     }

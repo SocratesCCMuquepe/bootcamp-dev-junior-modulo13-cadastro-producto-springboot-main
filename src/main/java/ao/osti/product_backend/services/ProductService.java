@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import ao.osti.product_backend.dto.CategoryResponse;
 import ao.osti.product_backend.dto.ProductRequest;
 import ao.osti.product_backend.dto.ProductResponse;
 import ao.osti.product_backend.models.Category;
