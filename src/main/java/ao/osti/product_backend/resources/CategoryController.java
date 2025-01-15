@@ -1,4 +1,4 @@
-package ao.osti.product_backend.controller;
+package ao.osti.product_backend.resources;
 
 import java.net.URI;
 import java.util.List;

@@ -1,4 +1,4 @@
-package ao.osti.product_backend.controller;
+package ao.osti.product_backend.resources;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.GetMapping;
