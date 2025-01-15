@@ -11,6 +11,7 @@ import ao.osti.product_backend.dto.ProductRequest;
 import ao.osti.product_backend.dto.ProductResponse;
 import ao.osti.product_backend.models.Category;
 import ao.osti.product_backend.models.Product;
+import ao.osti.product_backend.repositories.CategoryRepository;
 import ao.osti.product_backend.repositories.ProductRepository;
 
 @Service
@@ -19,7 +20,8 @@ public class ProductService {
     private ProductRepository productRepository;
 
     @Autowired
-    private CategoryService categoryService;
+    private CategoryRepository categoryRepository;
+    
 
     public ProductResponse getDTOById(long id) {
         Product product = getById(id);
@@ -53,7 +55,8 @@ public class ProductService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Category can not be empty");
         }
 
-        Category category = categoryService.getById(productUpdate.getCategory().getId());
+        Category category = categoryRepository.findById(productUpdate.getCategory().getId())
+                            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found."));
 
         product.setName(productUpdate.getName());
         product.setDescription(productUpdate.getDescription());
