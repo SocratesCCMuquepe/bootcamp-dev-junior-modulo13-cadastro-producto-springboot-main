@@ -3,35 +3,27 @@ package ao.osti.product_backend.services;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import ao.osti.product_backend.dto.ProductRequest;
 import ao.osti.product_backend.dto.ProductResponse;
 import ao.osti.product_backend.models.Category;
 import ao.osti.product_backend.models.Product;
-import ao.osti.product_backend.repositories.CategoryRepository;
 import ao.osti.product_backend.repositories.ProductRepository;
+import ao.osti.product_backend.services.exceptions.DatabasesException;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class ProductService {
+
     @Autowired
     private ProductRepository productRepository;
 
-    @Autowired
-    private CategoryRepository categoryRepository;
-    
-
-    public ProductResponse getDTOById(long id) {
-        Product product = getById(id);
-        return product.toDTO();
-    }
-
-    public Product getById(long id) {
+    public ProductResponse getById(long id) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found..!"));
-        return product;
+                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+        return product.toDTO();
     }
 
     public List<ProductResponse> getAll() {
@@ -39,32 +31,49 @@ public class ProductService {
     }
 
     public ProductResponse save(ProductRequest productRequest) {
-        Product product = productRepository.save(productRequest.toEntity());
-        return product.toDTO();
+        try {
+
+            Product product = productRepository.save(productRequest.toEntity());
+
+            return product.toDTO();
+
+        } catch (DataIntegrityViolationException e) {
+            throw new EntityNotFoundException("Category not found");
+        }
+
     }
 
     public void deleteById(long id) {
-        Product product = getById(id);
-        productRepository.delete(product);
+        try {
+            if (productRepository.existsById(id)) {
+                productRepository.deleteById(id);
+            } else {
+                throw new EntityNotFoundException("Product not found");
+            }
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabasesException("Conflit deliting Product");
+        }
     }
 
     public void update(long id, ProductRequest productUpdate) {
-        Product product = getById(id);
+        try {
+            if (productRepository.existsById(id)) {
 
-        if (productUpdate.getCategory() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Category can not be empty");
+                Product product = productRepository.getReferenceById(id);
+
+                product.setName(productUpdate.getName());
+                product.setDescription(productUpdate.getDescription());
+                product.setPrice(productUpdate.getPrice());
+                product.setCategory(new Category(productUpdate.getCategory().getId()));
+                product.setPromotion(productUpdate.isPromotion());
+                product.setNewProduct(productUpdate.isNewProduct());
+                productRepository.save(product);
+
+            } else {
+                throw new EntityNotFoundException("Product not found");
+            }
+        } catch (DataIntegrityViolationException e) {
+            throw new EntityNotFoundException("Category not found");
         }
-
-        Category category = categoryRepository.findById(productUpdate.getCategory().getId())
-                            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found."));
-
-        product.setName(productUpdate.getName());
-        product.setDescription(productUpdate.getDescription());
-        product.setPrice(productUpdate.getPrice());
-        product.setCategory(category);
-        product.setNewProduct(productUpdate.isNewProduct());
-        product.setPromotion(productUpdate.isPromotion());
-
-        productRepository.save(product);
     }
 }
